@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2-docker --json -i 0 index.js",
     "dev": "nodemon index.js | bunyan",
-    "test": "nyc mocha",
+    "test": "nyc --reporter lcov --reporter text mocha",
     "tdd": "npm run test -- --watch"
   },
   "repository": {

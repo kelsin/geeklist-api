@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- '8'
+env:
+  secure: PejvgKAGda8WoZBB4mY4RrjMkOktADO5iVnjCRysfHgjXCxI4XhI2sOuAULvMyB3ZyZDGQFa+tJPFFFizr6IfX1EbgjBBwmNys7LYlgdx53liLvVtfXzQarLfdM/GbcSQaWFjUOCbdAGDRqTJTc3YIL9Q85tvA2Q9qxU1N/AAvVFLJVseO3ScelcSKHw1v48hHqg+82llcZmoir3loM2L+yi4sAlfZ0Nvf1FUphDO/dn8ceKjTBfFQeaF5IpXapPh1SXLY14+0WproB6jGvvS8fCft5ObOxzyLoMo9e6nywHATPz0vN3XL12gk88zcOOMQJe4U9hbXacEwO2+aWmvVnJgZYwd9sOp1zo2u+hbdqvkk+S6ZRBdRu7emir0pdWsyy7drBL6kI+e/U9PtfI+h2TxNrdkji06P4XVvTnXjDHYAi8XbaxnxRtIRLDNVjoQb+7KPpB6wV0cwKts+8xPZ8W43CY+Hr2F/y5D7dI88k61vqRGoiGVw8chaL3tTmiH4J/0rhBFCVIyeOHRDdgXWCF+Nr+kDkK5PL5Q/s5w9f20lTpsOsSfswQwHWEK9rYfvoxDh8oO1v+9kO8IEdF5uHAxZ7jKdBCyOa1NNKKvAsHBUYPjlfkJHuoenMlCRI55EtN80y20xEDnJg6O86D8TH3uAMA/b6LEydRLblQUe4=
+before_script:
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then chmod +x ./cc-test-reporter
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter before-build
+after_script:
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
