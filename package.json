@@ -16,6 +16,10 @@
   "bugs": {
     "url": "https://github.com/kelsin/geeklist-api/issues"
   },
+  "engines": {
+    "node": ">=8.9.1",
+    "npm": ">=5.6.0"
+  },
   "homepage": "https://github.com/kelsin/geeklist-api#readme",
   "dependencies": {
     "@newrelic/native-metrics": "^2.1.2",
