@@ -1,0 +1,30 @@
+{
+  "name": "geeklist-api",
+  "version": "0.0.1",
+  "description": "An API to gather stats about BoardGameGeek geek lists",
+  "main": "index.js",
+  "scripts": {
+    "start": "pm2 start index.js -i 0",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kelsin/geeklist-api.git"
+  },
+  "author": "Christopher Giroir <kelsin@valefor.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kelsin/geeklist-api/issues"
+  },
+  "homepage": "https://github.com/kelsin/geeklist-api#readme",
+  "dependencies": {
+    "@newrelic/native-metrics": "^2.1.2",
+    "bluebird": "^3.5.1",
+    "bunyan": "^1.8.12",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "newrelic": "^2.4.1",
+    "pm2": "^2.8.0",
+    "ramda": "^0.25.0"
+  }
+}
