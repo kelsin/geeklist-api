@@ -11,6 +11,11 @@ const app = express();
 
 app.use(cors());
 
+app.use(function(req, res, next) {
+  res.set('Cache-Control', 'max-age=300');
+  return next();
+})
+
 app.get('/', function(req, res) {
   return res.json({ test: true });
 })
