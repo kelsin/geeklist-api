@@ -17,13 +17,16 @@ app.use(function(req, res, next) {
 })
 
 app.get('/', function(req, res) {
-  return res.json({ test: true });
-})
-
-app.get('/:id', function(req, res, next) {
-  return bgg.getGeeklist(req.params.id)
-    .then(result => res.json(result))
-    .catch(next);
+  return res.json({
+    routes: {
+      "/": "List of all groups that this api monitors",
+      "/group/:group/": "List of all geeklists in a group",
+      "/group/:group/user/:id": "Stats for an individual user",
+      "/group/:group/user/:id/geeklist/:id": "Stats for an individual user, in a single geeklist",
+      "/group/:group/geeklist/:id/": "Stats for an individual geeklist"
+    },
+    groups: []
+  });
 })
 
 app.use(function(err, req, res, next) {
