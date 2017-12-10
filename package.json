@@ -4,7 +4,7 @@
   "description": "An API to gather stats about BoardGameGeek geek lists",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start index.js -i 0",
+    "start": "pm2-docker --json -i 0 index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
