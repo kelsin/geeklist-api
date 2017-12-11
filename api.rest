@@ -1,0 +1,16 @@
+# Testing Adding Groups
+POST http://localhost:3000/admin/group
+Content-Type: application/json
+Authorization: token testing
+
+{
+  "slug": "sgoyt",
+  "name": "Solitaire Games On Your Table"
+}
+
+# Get the groups
+GET http://localhost:3000/
+
+# Delete groups
+DELETE http://localhost:3000/admin/group/5
+Authorization: token testing

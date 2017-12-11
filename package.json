@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pm2-docker --json -i 0 index.js",
-    "dev": "nodemon index.js | bunyan",
+    "dev": "AUTH_TOKEN=testing nodemon index.js | bunyan",
     "test": "nyc --reporter lcov --reporter text mocha",
     "tdd": "npm run test -- --watch"
   },
@@ -26,6 +26,7 @@
   "dependencies": {
     "@newrelic/native-metrics": "^2.1.2",
     "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
     "bunyan": "^1.8.12",
     "cors": "^2.8.4",
     "express": "^4.16.2",
@@ -45,6 +46,7 @@
     "nodemon": "^1.12.5",
     "nyc": "^11.3.0",
     "sqlite3": "^3.1.13",
+    "supertest": "^3.0.0",
     "timekeeper": "^2.0.0"
   }
 }
