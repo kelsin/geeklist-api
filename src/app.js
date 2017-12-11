@@ -49,8 +49,15 @@ app.post('/admin/group', groups.postGroup);
 app.delete('/admin/group/:slug', groups.deleteGroup);
 
 // Admin Geeklist Routes
+app.get('/admin/updating', geeklists.getUpdating);
+app.post('/admin/update', geeklists.postUpdate);
 app.post('/admin/group/:slug/geeklist', geeklists.postGeeklist);
 app.delete('/admin/group/:slug/geeklist/:id', geeklists.deleteGeeklist);
+app.get('/admin/bgg/geeklist/:id', (req, res, next) => {
+  bgg.getGeeklist(req.params.id)
+    .then(res.json.bind(res))
+    .catch(next);
+})
 
 // 404 Route
 app.use((req, res, next) => res.status(404).json({ error: "Not Found" }));

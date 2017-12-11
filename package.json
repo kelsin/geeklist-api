@@ -4,8 +4,8 @@
   "description": "An API to gather stats about BoardGameGeek geek lists",
   "main": "index.js",
   "scripts": {
-    "start": "pm2-docker --json -i 0 index.js",
-    "dev": "AUTH_TOKEN=testing nodemon index.js | bunyan",
+    "start": "pm2-docker --json ./config/production.js",
+    "dev": "AUTH_TOKEN=testing NODE_ENV=development nodemon index.js | bunyan",
     "test": "nyc --reporter lcov --reporter text mocha",
     "tdd": "npm run test -- --watch"
   },

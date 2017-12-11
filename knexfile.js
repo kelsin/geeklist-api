@@ -9,6 +9,10 @@ module.exports = {
     connection: {
       host: "localhost",
       database: "geeklist-api-dev"
+    },
+    pool: {
+      min: 2,
+      max: 2
     }
   },
 

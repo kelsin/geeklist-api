@@ -34,3 +34,11 @@ GET http://localhost:3000/group/sgoyt
 # Delete geeklist
 DELETE http://localhost:3000/admin/group/sgoyt/geeklist/233358
 Authorization: token testing
+
+# Get geeklists for updating
+GET http://localhost:3000/admin/updating
+Authorization: token testing
+
+# Run update
+POST http://localhost:3000/admin/update
+Authorization: token testing

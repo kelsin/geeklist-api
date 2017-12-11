@@ -50,4 +50,33 @@ describe('geeklists.js', function() {
              .isSame(newUpdateTime)).to.be.true;
     })
   });
+
+  describe("getLastUpdatedDate()", function() {
+    it("should find the proper date", function() {
+      let date1 = moment();
+      let date2 = date1.add(1, "minute");
+      let date3 = date2.add(1, "minute");
+      let date4 = date3.add(1, "minute");
+      let postdate = date1.subtract(1, "minute");
+
+      let input = {
+        postdate: [
+          postdate
+        ],
+        item: [{
+          "$": {
+            editdate: date4,
+            editdate: date3
+          }
+        },{
+          "$": {
+            editdate: date2,
+            editdate: date1
+          }
+        }]
+      };
+
+      expect(geeklists.getLastUpdatedDate(input).isSame(date4)).to.be.true;
+    });
+  });
 });

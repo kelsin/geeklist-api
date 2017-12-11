@@ -16,7 +16,7 @@ const _addApiLinkToGroups = (req, groups) => R.map(addApiLinkToGroup(req), group
 const addApiLinkToGroups = R.curry(_addApiLinkToGroups);
 
 const newGroup = group => {
-  let created_at = moment().valueOf();
+  let created_at = moment().utc().toDate();
   let updated_at = created_at;
 
   return {
@@ -25,16 +25,19 @@ const newGroup = group => {
     ...group
   };
 }
+
+const groupColumns = ['slug', 'name', 'thread', 'created_at', 'updated_at'];
+
 const selectGroups = () =>
       db('groups')
-      .select('slug', 'name', 'thread',
-              'created_at', 'updated_at')
+      .select(groupColumns)
       .orderBy('slug');
 
 const insertGroup = group =>
       db('groups')
+      .returning(groupColumns)
       .insert(group)
-      .then(() => group);
+      .then(R.find(R.always(true)));
 
 const delGroup = slug => db('groups')
       .where({ slug })
