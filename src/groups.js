@@ -26,7 +26,7 @@ const newGroup = group => {
   };
 }
 
-const groupColumns = ['slug', 'name', 'thread', 'created_at', 'updated_at'];
+const groupColumns = ['slug', 'name', 'thread', 'imageid', 'created_at', 'updated_at'];
 
 const selectGroups = () =>
       db('groups')

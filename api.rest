@@ -6,7 +6,8 @@ Content-Type: application/json
 {
   "slug": "sgoyt",
   "name": "Solitaire Games On Your Table",
-  "thread": 986303
+  "thread": 986303,
+  "imageid": 2373684
 }
 
 # Get the groups
@@ -41,4 +42,8 @@ Authorization: token testing
 
 # Run update
 POST http://localhost:3000/admin/update
+Authorization: token testing
+
+# Raw Geeklist
+GET http://localhost:3000/admin/bgg/geeklist/233358
 Authorization: token testing
