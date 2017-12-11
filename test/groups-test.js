@@ -9,17 +9,17 @@ describe("groups.js", function() {
         get() { return 'hostname:port'; }
       };
       let input = [{
-        id: 1
+        slug: 'one'
       },{
-        id: 2
+        slug: 'two'
       }]
 
       let result = [{
-        id: 1,
-        apiUrl: 'https://hostname:port/groups/1'
+        slug: 'one',
+        apiUrl: 'https://hostname:port/groups/one'
       }, {
-        id: 2,
-        apiUrl: 'https://hostname:port/groups/2'
+        slug: 'two',
+        apiUrl: 'https://hostname:port/groups/two'
       }];
 
       expect(groups.addApiLinksToGroups(request, input)).to.deep.equal(result);
