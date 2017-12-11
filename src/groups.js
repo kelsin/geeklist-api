@@ -2,7 +2,7 @@ const R = require('ramda');
 const db = require('./db');
 
 function _addApiLinkToGroup(req, group) {
-  group.apiUrl = `${req.protocol}://${req.get('Host')}/groups/${group.id}`;
+  group.apiUrl = `${req.protocol}://${req.get('Host')}/groups/${group.slug}`;
   return group;
 }
 let addApiLinkToGroup = R.curry(_addApiLinkToGroup);
@@ -30,7 +30,9 @@ function removeGroup(id) {
 
 function addGroup(req, res, next) {
   return insertGroup(req.body)
-    .then(() => res.json({ created: true }))
+    .then(() => ({...req.body}))
+    .then(addApiLinksToGroup(req))
+    .then(group => res.json(group))
     .catch(next);
 }
 
