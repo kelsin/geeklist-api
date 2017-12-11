@@ -1,10 +1,15 @@
 module.exports = {
   development: {
-    client: "sqlite3",
+    // client: "sqlite3",
+    // connection: {
+    //   filename: "./geeklist-api-dev.sqlite"
+    // },
+    // useNullAsDefault: true
+    client: "pg",
     connection: {
-      filename: "./devDb.sqlite"
-    },
-    useNullAsDefault: true
+      host: "localhost",
+      database: "geeklist-api-dev"
+    }
   },
 
   production: {
