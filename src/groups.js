@@ -1,43 +1,70 @@
-const R = require('ramda');
 const db = require('./db');
+const moment = require('moment');
+const R = require('ramda');
 
-function _addApiLinkToGroup(req, group) {
-  group.apiUrl = `${req.protocol}://${req.get('Host')}/groups/${group.slug}`;
-  return group;
+const links = require('./links');
+
+// addApiLinkToGroup :: Request -> Group -> Group
+const _addApiLinkToGroup = (req, group) => ({
+  apiUrl: `${req.protocol}://${req.get('Host')}/groups/${group.slug}`,
+  ...group
+});
+const addApiLinkToGroup = R.curry(_addApiLinkToGroup);
+
+// addApiLinkToGroups :: Request -> [Group] -> [Group]
+const _addApiLinkToGroups = (req, groups) => R.map(addApiLinkToGroup(req), groups);
+const addApiLinkToGroups = R.curry(_addApiLinkToGroups);
+
+const newGroup = group => {
+  let created_at = moment().unix();
+  let updated_at = created_at;
+
+  return {
+    created_at,
+    updated_at,
+    ...group
+  };
 }
-let addApiLinkToGroup = R.curry(_addApiLinkToGroup);
+const selectGroups = () =>
+      db('groups')
+      .select('slug', 'name', 'thread',
+              'created_at', 'updated_at')
+      .orderBy('slug');
 
-function addApiLinksToGroups(req, groups) {
-  return R.map(addApiLinkToGroup(req), groups);
-}
+const insertGroup = group =>
+      db('groups')
+      .insert(group)
+      .then(() => group);
 
-function loadGroups(req) {
-  return db('groups').select('id', 'slug', 'name');
-}
+const delGroup = slug => db('groups')
+      .where({ slug })
+      .del()
+      .then(() => ({ method: 'delete', slug }))
 
-function insertGroup(data) {
-  return db('groups').insert(data);
-}
+const getGroups = (req, res, next) =>
+      selectGroups()
+      .then(addApiLinkToGroups(req))
+      .then(groups => ({...links, groups }))
+      .then(res.json.bind(res))
+      .catch(next);
 
-function getGroups(req) {
-  return loadGroups(req)
-    .then(data => addApiLinksToGroups(req, data));
-}
+const postGroup = (req, res, next) =>
+      Promise.resolve(req.body)
+      .then(newGroup)
+      .then(insertGroup)
+      .then(addApiLinkToGroup(req))
+      .then(res.status(201).json.bind(res))
+      .catch(next);
 
-function removeGroup(id) {
-  return db('groups').where('id', id).del();
-}
+const deleteGroup = (req, res, next) =>
+      delGroup(req.params.slug)
+      .then(res.json.bind(res))
+      .catch(next);
 
-function addGroup(req, res, next) {
-  return insertGroup(req.body)
-    .then(() => ({...req.body}))
-    .then(addApiLinksToGroup(req))
-    .then(group => res.json(group))
-    .catch(next);
-}
-
-function deleteGroup(req, res) {
-  return removeGroup(req.params.id).then(data => res.json(data));
-}
-
-module.exports = { addApiLinksToGroups, getGroups, addGroup, deleteGroup };
+module.exports = {
+  addApiLinkToGroup,
+  addApiLinkToGroups,
+  getGroups,
+  postGroup,
+  deleteGroup
+};

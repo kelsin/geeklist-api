@@ -1,11 +1,10 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable("groups", table => {
-    table.increments("id");
-    table.string("slug").unique();
+    table.string("slug").primary();
     table.string("name");
+    table.integer("thread");
     table.timestamp("created_at", true);
     table.timestamp("updated_at", true);
-    table.index(["slug"]);
   }).then(() => {
     return knex.schema.createTable("geeklists", table => {
       table.integer("id").primary();
@@ -13,13 +12,14 @@ exports.up = function(knex, Promise) {
       table.integer("year");
       table.integer("month");
       table.boolean("update");
-      table.integer("group_id");
-      table.foreign("group_id").references("groups.id");
+      table.integer("group_slug");
+      table.foreign("group_slug").references("groups.slug");
       table.timestamp("created_at", true);
       table.timestamp("updated_at", true);
       table.timestamp("next_update_at", true);
       table.index(["next_update_at"]);
-      table.index(["group_id", "year", "month"]);
+      table.index(["id", "group_slug"]);
+      table.index(["group_slug", "year", "month"]);
     });
   }).then(() => {
     return knex.schema.createTable("items", table => {

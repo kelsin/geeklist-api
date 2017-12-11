@@ -1,9 +1,9 @@
 const expect = require('chai').expect;
 const timekeeper = require('timekeeper');
-const geeklist = require('../src/geeklist');
+const geeklists = require('../src/geeklists');
 const moment = require('moment');
 
-describe('geeklist.js', function() {
+describe('geeklists.js', function() {
   beforeEach(function() {
     timekeeper.freeze(new Date(2018, 0, 1, 9));
   });
@@ -19,7 +19,7 @@ describe('geeklist.js', function() {
       let lastUpdated = moment().subtract(1, 'day');
       let newUpdateTime = moment().add(6, 'hours');
 
-      expect(geeklist
+      expect(geeklists
              .getNewUpdateTime(minimumUpdateSeconds,
                                currentTime,
                                0,
@@ -28,7 +28,7 @@ describe('geeklist.js', function() {
 
       let secondUpdateTime = newUpdateTime.add(7.5, 'hours');
 
-      expect(geeklist
+      expect(geeklists
              .getNewUpdateTime(minimumUpdateSeconds,
                                newUpdateTime,
                                0,
@@ -42,7 +42,7 @@ describe('geeklist.js', function() {
       let lastUpdated = moment().subtract(1, 'day');
       let newUpdateTime = moment().add(7, 'hours');
 
-      expect(geeklist
+      expect(geeklists
              .getNewUpdateTime(minimumUpdateSeconds,
                                currentTime,
                                3600,

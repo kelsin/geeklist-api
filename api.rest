@@ -1,16 +1,36 @@
 # Testing Adding Groups
 POST http://localhost:3000/admin/group
-Content-Type: application/json
 Authorization: token testing
+Content-Type: application/json
 
 {
   "slug": "sgoyt",
-  "name": "Solitaire Games On Your Table"
+  "name": "Solitaire Games On Your Table",
+  "thread": 986303
 }
 
 # Get the groups
 GET http://localhost:3000/
 
 # Delete groups
-DELETE http://localhost:3000/admin/group/5
+DELETE http://localhost:3000/admin/group/sgoyt
+Authorization: token testing
+
+# Add Geeklist To SGOYT
+POST http://localhost:3000/admin/group/sgoyt/geeklist
+Authorization: token testing
+Content-Type: application/json
+
+{
+  "id": 233358,
+  "year": 2017,
+  "month": 12,
+  "group_slug": "sgoyt"
+}
+
+# Get geeklists
+GET http://localhost:3000/group/sgoyt
+
+# Delete geeklist
+DELETE http://localhost:3000/admin/group/sgoyt/geeklist/233358
 Authorization: token testing

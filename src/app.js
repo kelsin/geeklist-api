@@ -6,6 +6,7 @@ const bgg = require('./bgg');
 const logger = require('./logger');
 
 const groups = require('./groups');
+const geeklists = require('./geeklists');
 
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -20,22 +21,11 @@ app.use(function(req, res, next) {
   return next();
 })
 
-app.get('/', function(req, res) {
-  return groups.getGroups(req)
-    .then(groups => {
-      return res.json({
-        routes: {
-          "/": "List of all groups that this api monitors",
-          "/group/:group/": "List of all geeklists in a group",
-          "/group/:group/user/:id": "Stats for an individual user",
-          "/group/:group/user/:id/geeklist/:id": "Stats for an individual user, in a single geeklist",
-          "/group/:group/geeklist/:id/": "Stats for an individual geeklist"
-        },
-        groups
-      });
-    })
-})
+// Normal User Routes
+app.get('/', groups.getGroups);
+app.get('/group/:slug/', geeklists.getGeeklistsByGroupSlug);
 
+// Authentication
 app.use('/admin', function(req, res, next) {
   let auth = req.get('Authorization');
 
@@ -54,20 +44,21 @@ app.use('/admin', function(req, res, next) {
   return next();
 });
 
-app.post('/admin/group', groups.addGroup);
-app.delete('/admin/group/:id', groups.deleteGroup);
+// Admin Group Routes
+app.post('/admin/group', groups.postGroup);
+app.delete('/admin/group/:slug', groups.deleteGroup);
 
-app.use(function(req, res, next) {
-  return res.status(404).json({
-    error: "Not Found"
-  });
-})
+// Admin Geeklist Routes
+app.post('/admin/group/:slug/geeklist', geeklists.postGeeklist);
+app.delete('/admin/group/:slug/geeklist/:id', geeklists.deleteGeeklist);
 
-app.use(function(err, req, res, next) {
-  logger.error(err);
-  return res.status(500).json({
-    error: err
-  });
-})
+// 404 Route
+app.use((req, res, next) => res.status(404).json({ error: "Not Found" }));
+
+// Error Route
+app.use((error, req, res, next) => {
+  logger.error(error);
+  return res.status(500).json({ error });
+});
 
 module.exports = app;

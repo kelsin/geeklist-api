@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const groups = require('../src/groups');
 
 describe("groups.js", function() {
-  describe("addApiLinksToGroups()", function() {
+  describe("addApiLinkToGroups()", function() {
     it("should add a group link to a request", function() {
       let request = {
         protocol: 'https',
@@ -22,7 +22,7 @@ describe("groups.js", function() {
         apiUrl: 'https://hostname:port/groups/two'
       }];
 
-      expect(groups.addApiLinksToGroups(request, input)).to.deep.equal(result);
+      expect(groups.addApiLinkToGroups(request, input)).to.deep.equal(result);
     })
   })
 })
