@@ -12,7 +12,7 @@ exports.up = function(knex, Promise) {
       table.integer("year");
       table.integer("month");
       table.boolean("update");
-      table.integer("group_slug");
+      table.string("group_slug");
       table.foreign("group_slug").references("groups.slug");
       table.timestamp("created_at", true);
       table.timestamp("updated_at", true);
