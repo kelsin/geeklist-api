@@ -25,7 +25,7 @@ const getNewUpdateTime = R.curry(_getNewUpdateTime);
 
 // addApiLinkToGeeklist :: Request -> Geeklist -> Geeklist
 const _addApiLinkToGeeklist = (req, geeklist) => ({
-  apiUrl: `${req.protocol}://${req.get('Host')}/groups/${geeklist.group_slug}/geeklist/${geeklist.id}`,
+  apiUrl: `${req.protocol}://${req.get('Host')}/group/${geeklist.group_slug}/geeklist/${geeklist.id}`,
   ...geeklist
 });
 const addApiLinkToGeeklist = R.curry(_addApiLinkToGeeklist);

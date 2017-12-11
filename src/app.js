@@ -27,6 +27,8 @@ app.get('/group/:slug/', geeklists.getGeeklistsByGroupSlug);
 
 // Authentication
 app.use('/admin', function(req, res, next) {
+  res.set('Cache-Control', 'private, no-cache');
+
   let auth = req.get('Authorization');
 
   if(!process.env.AUTH_TOKEN) {
