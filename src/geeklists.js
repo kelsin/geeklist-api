@@ -161,8 +161,17 @@ const updateGeeklist = id =>
         return updateInFive(id);
       });
 
+const _logGeeklists = (verb, geeklists) => {
+  return geeklists.map(geeklist => {
+    logger.info(`${verb} ${geeklist.id}${geeklist.title ? ':' + geeklist.title : ''}`);
+    return geeklist;
+  });
+};
+const logGeeklists = R.curry(_logGeeklists);
+
 const updateGeeklists = () =>
       selectGeeklistsForUpdating()
+      .then(logGeeklists("Updating"))
       .then(R.map(R.prop('id')))
       .map(updateGeeklist);
 
