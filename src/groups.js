@@ -16,7 +16,7 @@ const _addApiLinkToGroups = (req, groups) => R.map(addApiLinkToGroup(req), group
 const addApiLinkToGroups = R.curry(_addApiLinkToGroups);
 
 const newGroup = group => {
-  let created_at = moment().unix();
+  let created_at = moment().valueOf();
   let updated_at = created_at;
 
   return {

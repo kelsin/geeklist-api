@@ -24,7 +24,7 @@ const _addApiLinkToGeeklists = (req, groups) => R.map(addApiLinkToGeeklist(req),
 const addApiLinkToGeeklists = R.curry(_addApiLinkToGeeklists);
 
 const newGeeklist = geeklist => {
-  let created_at = moment().unix();
+  let created_at = moment().valueOf();
 
   return {
     update: true,
