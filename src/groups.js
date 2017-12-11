@@ -30,10 +30,7 @@ function removeGroup(id) {
 
 function addGroup(req, res, next) {
   return insertGroup(req.body)
-    .then(ids => ids[0])
-    .then(id => ({id, ...req.body}))
-    .then(addApiLinkToGroup(req))
-    .then(group => res.json(group))
+    .then(() => res.json({ created: true }))
     .catch(next);
 }
 
