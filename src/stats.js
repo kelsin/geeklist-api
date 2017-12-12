@@ -51,6 +51,18 @@ const selectCounts = R.compose(selectRatingCount,
                                selectGameCount,
                                selectEntryCount);
 
+const sortGeeklists = R.sortWith([R.descend(R.prop('year')),
+                                  R.descend(R.prop('month'))]);
+
+const sortEntriesInGeeklist = R.sortWith([R.descend(R.prop('postdate'))]);
+
+const transformAndSortEntries = R.compose(sortGeeklists,
+                                          R.map(geeklist => ({
+                                              ...geeklist,
+                                              entries: sortEntriesInGeeklist(geeklist.entries)
+                                          })),
+                                          R.values);
+
 const groupEntriesByGeeklist = R.reduce((entries, entry) => {
     if(!entries[entry.geeklist_id]) {
         entries[entry.geeklist_id] = {
@@ -75,7 +87,7 @@ const groupEntriesByGeeklist = R.reduce((entries, entry) => {
     });
 
     return entries;
-}, {});
+});
 
 const selectEntries = query => query
       .select("items.username", "items.objectname", "items.objectid",
@@ -125,9 +137,13 @@ const byGame = query => query
 
 const byGeeklist = query => query
       .select('items.geeklist_id',
-              'geeklists.title', 'geeklists.updated_at', 'geeklists.next_update_at')
+              'geeklists.title', 'geeklists.year', 'geeklists.month',
+              'geeklists.updated_at', 'geeklists.next_update_at')
+      .orderBy('geeklists.year', 'desc')
+      .orderBy('geeklists.month', 'desc')
       .groupBy('items.geeklist_id',
-               'geeklists.title', 'geeklists.updated_at', 'geeklists.next_update_at');
+               'geeklists.title', 'geeklists.year', 'geeklists.month',
+               'geeklists.updated_at', 'geeklists.next_update_at');
 
 const entries = db => db
       .from('items')
@@ -182,7 +198,8 @@ const selectUserEntriesForGroup = (slug, username) => {
               forUser(username),
               forGroup(slug),
               entries)(db)
-        .then(groupEntriesByGeeklist);
+        .then(groupEntriesByGeeklist({}))
+        .then(transformAndSortEntries);
 };
 
 const selectGameEntriesForGroup = (slug, id) => {
@@ -192,7 +209,8 @@ const selectGameEntriesForGroup = (slug, id) => {
               forGame(id),
               forGroup(slug),
               entries)(db)
-        .then(groupEntriesByGeeklist);
+        .then(groupEntriesByGeeklist({}))
+        .then(transformAndSortEntries);
 };
 
 const selectGeeklistStatsForGroup = (slug, id) => {
@@ -252,7 +270,10 @@ const getGeeklistStatsForGroup = (req, res, next) => {
 }
 
 module.exports = {
-  getGeeklistStatsForGroup,
-  getUserStatsForGroup,
-  getGameStatsForGroup
+    getGeeklistStatsForGroup,
+    getUserStatsForGroup,
+    getGameStatsForGroup,
+    sortGeeklists,
+    sortEntriesInGeeklist,
+    transformAndSortEntries
 };

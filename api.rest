@@ -29,6 +29,18 @@ Content-Type: application/json
   "group_slug": "sgoyt"
 }
 
+# Add November
+POST http://localhost:3000/admin/group/sgoyt/geeklist
+Authorization: token testing
+Content-Type: application/json
+
+{
+  "id": 231127,
+  "year": 2017,
+  "month": 11,
+  "group_slug": "sgoyt"
+}
+
 # Get geeklists
 GET http://localhost:3000/group/sgoyt
 
