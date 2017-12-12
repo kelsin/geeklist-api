@@ -80,6 +80,7 @@ const selectGeeklistsForUpdating = () =>
 const selectGeeklistsByGroupSlug = slug =>
       db('geeklists')
       .select(geeklistColumns)
+      .where('geeklists.group_slug', slug)
       .orderBy('year', 'desc')
       .orderBy('month', 'desc')
       .orderBy('title');
