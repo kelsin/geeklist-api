@@ -54,3 +54,9 @@ Authorization: token testing
 
 # User Stats
 GET http://localhost:3000/group/sgoyt/user/Kelsin
+
+# Geeklist Stats
+GET http://localhost:3000/group/sgoyt/geeklist/233358
+
+# Game Stats
+GET http://localhost:3000/group/sgoyt/game/226502

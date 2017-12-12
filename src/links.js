@@ -4,9 +4,9 @@ module.exports = {
   routes: {
     "/": "List of all groups that this api monitors",
     "/group/:group/": "List of all geeklists in a group",
+    "/group/:group/geeklist/:id/": "Stats for an individual geeklist",
     "/group/:group/user/:id": "Stats for an individual user",
-    "/group/:group/user/:id/geeklist/:id": "Stats for an individual user, in a single geeklist",
-    "/group/:group/geeklist/:id/": "Stats for an individual geeklist"
+    "/group/:group/game/:id": "Stats for an individual game",
   },
   bgg: {
     url: bgg.BGG_URL,

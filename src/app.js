@@ -25,7 +25,9 @@ app.use(function(req, res, next) {
 // Normal User Routes
 app.get('/', groups.getGroups);
 app.get('/group/:slug/', geeklists.getGeeklistsByGroupSlug);
+app.get('/group/:slug/geeklist/:id', stats.getGeeklistStatsForGroup);
 app.get('/group/:slug/user/:username', stats.getUserStatsForGroup);
+app.get('/group/:slug/game/:id', stats.getGameStatsForGroup);
 
 // Authentication
 app.use('/admin', function(req, res, next) {
