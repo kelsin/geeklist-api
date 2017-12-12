@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use(function(req, res, next) {
-  res.set('Cache-Control', 'max-age=300');
+  res.set('Cache-Control', 'max-age=60');
   return next();
 })
 
