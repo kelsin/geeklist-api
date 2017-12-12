@@ -1,4 +1,3 @@
 --exit
 --recursive
 -R spec
---require ./test/mocha.env.js

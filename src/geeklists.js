@@ -10,23 +10,23 @@ const randomInt = (min, max) =>
 
 // getNewUpdateTime :: Number -> Moment -> Moment
 const _getNewUpdateTime = (minimumUpdateSeconds, now, randomSeconds, lastUpdated) => {
-  let diff = now.diff(lastUpdated);
-  let newUpdateSeconds = diff / 4000;
-  logger.debug("Geeklist last updated at " + lastUpdated.toString() + ", " + (diff / 1000) + " seconds ago");
-  logger.debug("Updating it again in " + newUpdateSeconds + " seconds");
-  logger.debug("Min: " + minimumUpdateSeconds + ", Random: " + randomSeconds);
-  let result = now.add(Math.max(minimumUpdateSeconds,
-                                newUpdateSeconds) + randomSeconds,
-                       'seconds');
-  logger.debug("Result: " + result.toString());
-  return result;
+    let diff = now.diff(lastUpdated);
+    let newUpdateSeconds = diff / 4000;
+    logger.debug("Geeklist last updated at " + lastUpdated.toString() + ", " + (diff / 1000) + " seconds ago");
+    logger.debug("Updating it again in " + newUpdateSeconds + " seconds");
+    logger.debug("Min: " + minimumUpdateSeconds + ", Random: " + randomSeconds);
+    let result = now.add(Math.max(minimumUpdateSeconds,
+                                  newUpdateSeconds) + randomSeconds,
+                         'seconds');
+    logger.debug("Result: " + result.toString());
+    return result;
 }
 const getNewUpdateTime = R.curry(_getNewUpdateTime);
 
 // addApiLinkToGeeklist :: Request -> Geeklist -> Geeklist
 const _addApiLinkToGeeklist = (req, geeklist) => ({
-  apiUrl: `${req.protocol}://${req.get('Host')}/group/${geeklist.group_slug}/geeklist/${geeklist.id}`,
-  ...geeklist
+    apiUrl: `${req.protocol}://${req.get('Host')}/group/${geeklist.group_slug}/geeklist/${geeklist.id}`,
+    ...geeklist
 });
 const addApiLinkToGeeklist = R.curry(_addApiLinkToGeeklist);
 
@@ -34,23 +34,42 @@ const addApiLinkToGeeklist = R.curry(_addApiLinkToGeeklist);
 const _addApiLinkToGeeklists = (req, groups) => R.map(addApiLinkToGeeklist(req), groups);
 const addApiLinkToGeeklists = R.curry(_addApiLinkToGeeklists);
 
-const newGeeklist = geeklist => {
-  let created_at = moment().utc().toDate();
-  let updated_at = created_at;
-  let next_update_at = created_at;
+const getLastUpdatedDate = geeklist => {
+    let dates = R.chain(item => [item.postdate, item.editdate],
+                        geeklist.items);
 
-  return {
-    update: true,
-    created_at,
-    updated_at,
-    next_update_at,
-    ...geeklist
-  };
+    let lastUpdatedDate = R.reduce((current, date) =>
+                                   current.isAfter(date) ? current : date,
+                                   geeklist.postdate,
+                                   dates);
+
+    logger.debug("Geeklist posted: " + geeklist.postdate.toString());
+    logger.debug("Last updated date: " + lastUpdatedDate.toString());
+
+    return lastUpdatedDate;
+};
+
+const newGeeklist = geeklist => {
+    let created_at = moment().utc().toDate();
+    let updated_at = created_at;
+    let next_update_at = created_at;
+
+    return {
+        update: true,
+        created_at,
+        updated_at,
+        next_update_at,
+        ...geeklist
+    };
 };
 
 const geeklistColumns = ['id', 'title', 'year', 'month', 'update', 'group_slug',
+                         'username', 'numitems', 'thumbs',
                          'created_at', 'updated_at', 'next_update_at'];
 
+const itemColumns = ['id', 'objecttype', 'subtype', 'objectid', 'objectname',
+                     'username', 'thumbs', 'imageid', 'summary', 'rating',
+                     'postdate', 'geeklist_id', 'created_at', 'updated_at'];
 
 const selectGeeklistsForUpdating = () =>
       db('geeklists')
@@ -66,23 +85,26 @@ const selectGeeklistsByGroupSlug = slug =>
       .orderBy('title');
 
 const updateInFive = id => {
-  let now = moment().utc();
-  return db('geeklists')
-    .returning(geeklistColumns)
-    .where({ id })
-    .update({ next_update_at: now.add(5, 'seconds').toDate() });
+    let now = moment().utc();
+    return db('geeklists')
+        .returning(geeklistColumns)
+        .where({ id })
+        .update({ next_update_at: now.add(5, 'seconds').toDate() });
 };
 
-const updateTitle = (id, title, lastUpdated) => {
-  let now = moment().utc();
-  return db('geeklists')
-    .returning(geeklistColumns)
-    .where({ id })
-    .update({
-      title,
-      updated_at: now.toDate(),
-      next_update_at: getNewUpdateTime(300, now, randomInt(1, 60), lastUpdated).toDate()
-    });
+const updateGeeklistData = geeklist => {
+    let lastUpdated = getLastUpdatedDate(geeklist);
+    let now = moment().utc();
+    let { id, postdate, editdate, items, ...updates } = geeklist;
+    return db('geeklists')
+        .returning(geeklistColumns)
+        .where({ id: geeklist.id })
+        .update({
+            updated_at: now.toDate(),
+            next_update_at: getNewUpdateTime(300, now, randomInt(1, 60), lastUpdated).toDate(),
+            ...updates
+        })
+        .return(geeklist);
 };
 
 const insertGeeklist = geeklist =>
@@ -90,6 +112,53 @@ const insertGeeklist = geeklist =>
       .returning(geeklistColumns)
       .insert(geeklist)
       .then(R.find(R.always(true)));
+
+const _insertOrUpdateGeeklistItem = (geeklist_id, item) => {
+    let created_at = moment().utc().toDate();
+    let updated_at = created_at;
+
+    logger.debug("Inserting", item);
+    return db('items')
+        .returning(itemColumns)
+        .insert({
+            created_at,
+            updated_at,
+            geeklist_id,
+            id: item.id,
+            username: item.username,
+            objecttype: item.objecttype,
+            subtype: item.subtype,
+            objectid: item.objectid,
+            objectname: item.objectname,
+            postdate: item.postdate,
+            thumbs: item.thumbs,
+            imageid: item.imageid,
+            rating: item.rating,
+            summary: item.summary
+        })
+        .catch(err => {
+            logger.debug(err);
+            logger.debug("Updating", item);
+            return db('items')
+                .returning(itemColumns)
+                .where({ geeklist_id, id: item.id })
+                .update({
+                    updated_at,
+                    username: item.username,
+                    objecttype: item.objecttype,
+                    subtype: item.subtype,
+                    objectid: item.objectid,
+                    objectname: item.objectname,
+                    postdate: item.postdate,
+                    thumbs: item.thumbs,
+                    imageid: item.imageid,
+                    rating: item.rating,
+                    summary: item.summary
+                });
+        })
+        .then(R.find(R.always(true)));
+}
+const insertOrUpdateGeeklistItem = R.curry(_insertOrUpdateGeeklistItem);
 
 const delGeeklist = (id, group_slug) => db('geeklists')
       .where({ id, group_slug })
@@ -124,48 +193,30 @@ const deleteGeeklist = (req, res, next) =>
       .then(res.json.bind(res))
       .catch(next);
 
-const getLastUpdatedDate = geeklist => {
-  let dates = R.chain(item => {
-    if(!item.$) { return []; }
-    if(!item.$.editdate) { return [item.$.postdate]; }
-    return [item.$.editdate, item.$.postdate];
-  }, geeklist.item);
-
-  let moments = R.map(date => moment(date).utc(), dates);
-
-  let lastUpdatedDate = R.reduce((current, date) =>
-                                 current.isAfter(date) ? current : date,
-                                 moment(geeklist.postdate[0]).utc(),
-                                 moments);
-
-  logger.debug("Geeklist posted: " + moment(geeklist.postdate[0]).utc().toString());
-  logger.debug("Last updated date: " + lastUpdatedDate.toString());
-
-  return lastUpdatedDate;
-};
-
 const updateGeeklist = id =>
-      bgg.getGeeklist(id)
-      .then(result => {
-        if(result.message) {
-          throw "Update Queued, waiting for 5 seconds";
-        } else {
-          return result;
-        }
+      Promise.resolve(id)
+      .then(bgg.getGeeklist)
+      .then(bgg.transformGeeklist)
+      .then(updateGeeklistData)
+      .then(geeklist => {
+          logger.debug(geeklist.items[0]);
+          return geeklist;
       })
-      .then(result => updateTitle(id,
-                                 result.geeklist.title[0],
-                                 getLastUpdatedDate(result.geeklist)))
+      .then(geeklist => Promise.map(
+          geeklist.items,
+          insertOrUpdateGeeklistItem(id),
+          { concurrency: 4 })
+            .return(geeklist))
       .catch((err) => {
-        logger.error(err);
-        return updateInFive(id);
+          logger.error(err);
+          return updateInFive(id);
       });
 
 const _logGeeklists = (verb, geeklists) => {
-  return geeklists.map(geeklist => {
-    logger.info(`${verb} ${geeklist.id}${geeklist.title ? ':' + geeklist.title : ''}`);
-    return geeklist;
-  });
+    return geeklists.map(geeklist => {
+        logger.info(`${verb} ${geeklist.id}${geeklist.title ? ':' + geeklist.title : ''}`);
+        return geeklist;
+    });
 };
 const logGeeklists = R.curry(_logGeeklists);
 
@@ -181,20 +232,20 @@ const postUpdate = (req, res, next) =>
       .catch(next);
 
 module.exports = {
-  getNewUpdateTime,
-  addApiLinkToGeeklist,
-  addApiLinkToGeeklists,
-  newGeeklist,
-  selectGeeklistsForUpdating,
-  selectGeeklistsByGroupSlug,
-  insertGeeklist,
-  delGeeklist,
-  getGeeklistsByGroupSlug,
-  postGeeklist,
-  deleteGeeklist,
-  getUpdating,
-  updateGeeklist,
-  updateGeeklists,
-  postUpdate,
-  getLastUpdatedDate
+    getNewUpdateTime,
+    addApiLinkToGeeklist,
+    addApiLinkToGeeklists,
+    newGeeklist,
+    selectGeeklistsForUpdating,
+    selectGeeklistsByGroupSlug,
+    insertGeeklist,
+    delGeeklist,
+    getGeeklistsByGroupSlug,
+    postGeeklist,
+    deleteGeeklist,
+    getUpdating,
+    updateGeeklist,
+    updateGeeklists,
+    postUpdate,
+    getLastUpdatedDate
 };

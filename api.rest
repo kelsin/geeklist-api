@@ -45,5 +45,12 @@ POST http://localhost:3000/admin/update
 Authorization: token testing
 
 # Raw Geeklist
+GET http://localhost:3000/admin/bgg/geeklist/raw/233358
+Authorization: token testing
+
+# Transformed Geeklist
 GET http://localhost:3000/admin/bgg/geeklist/233358
 Authorization: token testing
+
+# User Stats
+GET http://localhost:3000/group/sgoyt/user/Kelsin

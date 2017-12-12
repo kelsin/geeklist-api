@@ -4,7 +4,6 @@ module.exports = {
     // connection: {
     //   filename: "./geeklist-api-dev.sqlite"
     // },
-    // useNullAsDefault: true
     client: "pg",
     connection: {
       host: "localhost",
@@ -13,7 +12,8 @@ module.exports = {
     pool: {
       min: 2,
       max: 2
-    }
+    },
+    useNullAsDefault: true
   },
 
   production: {
@@ -22,6 +22,7 @@ module.exports = {
     pool: {
       min: 2,
       max: 10
-    }
+    },
+    useNullAsDefault: true
   }
 };

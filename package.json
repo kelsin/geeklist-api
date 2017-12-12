@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2-docker --json ./config/production.config.js",
     "dev": "AUTH_TOKEN=testing NODE_ENV=development nodemon index.js | bunyan",
-    "test": "nyc --reporter lcov --reporter text mocha",
+    "test": "nyc --reporter lcov --reporter text mocha test/mocha.env.js test/**/*.js",
     "tdd": "npm run test -- --watch"
   },
   "repository": {

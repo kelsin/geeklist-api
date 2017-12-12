@@ -7,6 +7,7 @@ const logger = require('./logger');
 
 const groups = require('./groups');
 const geeklists = require('./geeklists');
+const stats = require('./stats');
 
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -24,6 +25,7 @@ app.use(function(req, res, next) {
 // Normal User Routes
 app.get('/', groups.getGroups);
 app.get('/group/:slug/', geeklists.getGeeklistsByGroupSlug);
+app.get('/group/:slug/user/:username', stats.getUserStatsForGroup);
 
 // Authentication
 app.use('/admin', function(req, res, next) {
@@ -55,8 +57,15 @@ app.get('/admin/updating', geeklists.getUpdating);
 app.post('/admin/update', geeklists.postUpdate);
 app.post('/admin/group/:slug/geeklist', geeklists.postGeeklist);
 app.delete('/admin/group/:slug/geeklist/:id', geeklists.deleteGeeklist);
+app.get('/admin/bgg/geeklist/raw/:id', (req, res, next) => {
+  bgg.getGeeklist(req.params.id)
+    .then(res.json.bind(res))
+    .catch(next);
+})
+
 app.get('/admin/bgg/geeklist/:id', (req, res, next) => {
   bgg.getGeeklist(req.params.id)
+    .then(bgg.transformGeeklist)
     .then(res.json.bind(res))
     .catch(next);
 })
