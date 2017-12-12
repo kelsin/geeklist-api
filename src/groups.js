@@ -1,4 +1,5 @@
 const db = require('./db');
+const logger = require('./logger');
 const moment = require('moment');
 const R = require('ramda');
 
@@ -33,11 +34,21 @@ const selectGroups = () =>
       .select(groupColumns)
       .orderBy('slug');
 
-const insertGroup = group =>
-      db('groups')
-      .returning(groupColumns)
-      .insert(group)
-      .then(R.find(R.always(true)));
+const insertGroup = group => {
+    logger.debug("Inserting", group);
+    return db('groups')
+        .returning(groupColumns)
+        .insert(group)
+        .then(R.find(R.always(true)))
+        .catch(err => {
+            logger.debug(err);
+            logger.debug("Updating", group);
+            return db('groups')
+                .returning(groupColumns)
+                .where({ slug: group.slug })
+                .update(group);
+        });
+};
 
 const delGroup = slug => db('groups')
       .where({ slug })
