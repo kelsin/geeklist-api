@@ -51,6 +51,32 @@ const selectCounts = R.compose(selectRatingCount,
                                selectGameCount,
                                selectEntryCount);
 
+const groupEntriesByGeeklist = R.reduce((entries, entry) => {
+    if(!entries[entry.geeklist_id]) {
+        entries[entry.geeklist_id] = {
+            geeklist_id: entry.geeklist_id,
+            title: entry.title,
+            year: entry.year,
+            month: entry.month,
+            entries: []
+        }
+    }
+
+    entries[entry.geeklist_id].entries.push({
+        username: entry.username,
+        objectname: entry.objectname,
+        objectid: entry.objectid,
+        imageid: entry.imageid,
+        thumbs: entry.thumbs,
+        summary: entry.summary,
+        rating: entry.rating,
+        id: entry.id,
+        postdate: entry.postdate
+    });
+
+    return entries;
+}, {});
+
 const selectEntries = query => query
       .select("items.username", "items.objectname", "items.objectid",
               "items.imageid", "items.thumbs",
@@ -155,7 +181,8 @@ const selectUserEntriesForGroup = (slug, username) => {
   return R.compose(selectEntries,
               forUser(username),
               forGroup(slug),
-              entries)(db);
+              entries)(db)
+        .then(groupEntriesByGeeklist);
 };
 
 const selectGameEntriesForGroup = (slug, id) => {
@@ -164,7 +191,8 @@ const selectGameEntriesForGroup = (slug, id) => {
   return R.compose(selectEntries,
               forGame(id),
               forGroup(slug),
-              entries)(db);
+              entries)(db)
+        .then(groupEntriesByGeeklist);
 };
 
 const selectGeeklistStatsForGroup = (slug, id) => {
