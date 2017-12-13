@@ -65,7 +65,7 @@ const moveEntriesToGeeklists = R.curry((omit, data) => {
                     R.sortWith([R.descend(R.prop('postdate'))]),
                     R.map(R.omit(geeklistFields)),
                     R.map(R.omit(omit)),
-                    R.filter(inGeeklist(geeklist.geeklist_id))
+                    R.filter(inGeeklist(geeklist.id))
                 )(entries)
             };
         }, data.geeklists),
@@ -180,7 +180,7 @@ const selectUserStatsForGroup = (slug, username) => {
                      byGeeklist,
                      entries)(db)
         .then(R.map(R.compose(transformCounts, R.omit(['users', 'username']))))
-        .then(R.indexBy(R.prop("geeklist_id")))
+        .then(R.indexBy(R.prop("id")))
 };
 
 const selectGameStatsForGroup = (slug, id) => {
@@ -193,7 +193,7 @@ const selectGameStatsForGroup = (slug, id) => {
                      byGeeklist,
                      entries)(db)
         .then(R.map(R.compose(transformCounts, R.omit(['games', 'objectid', 'objectname']))))
-        .then(R.indexBy(R.prop('geeklist_id')));
+        .then(R.indexBy(R.prop('id')));
 };
 
 const selectUserRatingsForGroup = (slug, username) => {
