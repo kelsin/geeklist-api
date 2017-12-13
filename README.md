@@ -1,4 +1,4 @@
-# geeklist-api
+# Geeklist API
 An API to gather stats about BoardGameGeek geek lists
 
 [![Travis](https://img.shields.io/travis/kelsin/geeklist-api.svg)](https://travis-ci.org/kelsin/geeklist-api)

@@ -63,6 +63,15 @@ const newGeeklist = geeklist => {
     };
 };
 
+const updatedGeeklist = geeklist => {
+    let next_update_at = moment().utc().toDate();
+
+    return {
+        next_update_at,
+        ...geeklist
+    };
+};
+
 const geeklistColumns = ['id', 'title', 'year', 'month', 'update', 'group_slug',
                          'username', 'numitems', 'thumbs',
                          'created_at', 'updated_at', 'next_update_at'];
@@ -108,11 +117,21 @@ const updateGeeklistData = geeklist => {
         .return(geeklist);
 };
 
-const insertGeeklist = geeklist =>
-      db('geeklists')
-      .returning(geeklistColumns)
-      .insert(geeklist)
-      .then(R.find(R.always(true)));
+const insertGeeklist = geeklist => {
+    logger.debug("Inserting", geeklist);
+    return db('geeklists')
+        .returning(geeklistColumns)
+        .insert(newGeeklist(geeklist))
+        .catch(err => {
+            logger.debug(err);
+            logger.debug("Updating", geeklist);
+            return db('geeklists')
+                .returning(geeklistColumns)
+                .where('id', geeklist.id)
+                .update(updatedGeeklist(geeklist));
+        })
+        .then(R.find(R.always(true)));
+};
 
 const _insertOrUpdateGeeklistItem = (geeklist_id, item) => {
     let created_at = moment().utc().toDate();
@@ -183,7 +202,10 @@ const getGeeklistsByGroupSlug = (req, res, next) =>
 
 const postGeeklist = (req, res, next) =>
       Promise.resolve(req.body)
-      .then(newGeeklist)
+      .then(data => ({
+          ...data,
+          group_slug: req.params.slug
+      }))
       .then(insertGeeklist)
       .then(addApiLinkToGeeklist(req))
       .then(res.status(201).json.bind(res))

@@ -1,4 +1,5 @@
 const bunyan = require('bunyan');
+const R = require('ramda');
 
 const logLevel = () => {
   if(process.env.NODE_ENV === 'development') {
@@ -20,3 +21,4 @@ const logger = bunyan.createLogger({
 });
 
 module.exports = logger;
+module.exports.tap = R.tap(logger.debug.bind(logger));

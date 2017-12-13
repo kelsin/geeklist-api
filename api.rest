@@ -17,6 +17,18 @@ GET http://localhost:3000/
 DELETE http://localhost:3000/admin/group/sgoyt
 Authorization: token testing
 
+# Adding SROYT
+POST http://localhost:3000/admin/group
+Authorization: token testing
+Content-Type: application/json
+
+{
+  "slug": "sroyt",
+  "name": "Solo RPGs On Your Table",
+  "thread": 1422962,
+  "imageid": 2634386
+}
+
 # Add Geeklist To SGOYT
 POST http://localhost:3000/admin/group/sgoyt/geeklist
 Authorization: token testing
@@ -39,6 +51,17 @@ Content-Type: application/json
   "year": 2017,
   "month": 11,
   "group_slug": "sgoyt"
+}
+
+# Add October
+POST http://localhost:3000/admin/group/sgoyt/geeklist
+Authorization: token testing
+Content-Type: application/json
+
+{
+  "id": 229952,
+  "year": 2017,
+  "month": 10
 }
 
 # Get geeklists
