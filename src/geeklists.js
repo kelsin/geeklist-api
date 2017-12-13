@@ -25,7 +25,7 @@ const getNewUpdateTime = R.curry(_getNewUpdateTime);
 
 // addApiLinkToGeeklist :: Request -> Geeklist -> Geeklist
 const _addApiLinkToGeeklist = (req, geeklist) => ({
-    apiUrl: `${req.protocol}://${req.get('Host')}/group/${geeklist.group_slug}/geeklist/${geeklist.id}`,
+    href: `${req.protocol}://${req.get('Host')}/group/${geeklist.group_slug}/geeklist/${geeklist.id}`,
     ...geeklist
 });
 const addApiLinkToGeeklist = R.curry(_addApiLinkToGeeklist);
@@ -195,6 +195,7 @@ const getUpdating = (req, res, next) =>
 const getGeeklistsByGroupSlug = (req, res, next) =>
       Promise.resolve(req.params.slug)
       .then(selectGeeklistsByGroupSlug)
+      .then(R.indexBy(R.prop('id')))
       .then(addApiLinkToGeeklists(req))
       .then(geeklists => ({ slug: req.params.slug, geeklists }))
       .then(res.json.bind(res))

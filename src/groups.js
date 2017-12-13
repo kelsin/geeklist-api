@@ -7,7 +7,7 @@ const links = require('./links');
 
 // addApiLinkToGroup :: Request -> Group -> Group
 const _addApiLinkToGroup = (req, group) => ({
-    apiUrl: `${req.protocol}://${req.get('Host')}/group/${group.slug}`,
+    href: `${req.protocol}://${req.get('Host')}/group/${group.slug}`,
     ...group
 });
 const addApiLinkToGroup = R.curry(_addApiLinkToGroup);

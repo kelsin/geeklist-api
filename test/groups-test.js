@@ -16,10 +16,10 @@ describe("groups.js", function() {
 
       let result = [{
         slug: 'one',
-        apiUrl: 'https://hostname:port/group/one'
+        href: 'https://hostname:port/group/one'
       }, {
         slug: 'two',
-        apiUrl: 'https://hostname:port/group/two'
+        href: 'https://hostname:port/group/two'
       }];
 
       expect(groups.addApiLinkToGroups(request, input)).to.deep.equal(result);
