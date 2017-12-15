@@ -169,7 +169,10 @@ const entries = db => db
       .from('items')
       .leftJoin('geeklists', 'items.geeklist_id', 'geeklists.id');
 
-const convertRatings = R.map(R.over(R.lensProp('rating'), Number));
+const isNotNil = R.complement(R.isNil);
+const convertRatings = R.map(R.over(R.lensProp('rating'),
+                                    R.when(isNotNil,
+                                           Number)));
 
 const selectUserStatsForGroup = (slug, username) => {
     logger.debug("Looking up " + username + " stats for group: " + slug);
