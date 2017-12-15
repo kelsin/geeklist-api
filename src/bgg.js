@@ -8,8 +8,8 @@ const BGG_URL = 'https://www.boardgamegeek.com/';
 const BGG_XMLAPI_GEEKLIST_PATH = 'xmlapi/geeklist/';
 const BGG_THREAD_PATH = 'thread/';
 
-const SUMMARY_RE = /\<summary\>(.+)\<\/summary\>/;
-const RATING_RE = /\<rating\>([0-9.]+)\<\/rating\>/;
+const SUMMARY_RE = /\<summary\>(.+)\<\/summary\>/i;
+const RATING_RE = /\<rating\>([0-9.]+)\<\/rating\>/i;
 const STARS_RE = /(:(half|no)?star:)+/;
 const STAR_RE = /:star:/g;
 const NOSTAR_RE = /:nostar:/g;
