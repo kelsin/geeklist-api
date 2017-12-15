@@ -8,27 +8,29 @@ describe("bgg.js", function() {
       expect(":halfstar:".match(bgg.HALFSTAR_RE)).to.deep.equal([":halfstar:"])
     });
 
-    it("should match any combination of stars together", function() {
+    it("should match any combination of 5 stars together", function() {
       // Singles
-      expect(bgg.STARS_RE.test(":star:")).to.be.true;
-      expect(bgg.STARS_RE.test(":nostar:")).to.be.true;
-      expect(bgg.STARS_RE.test(":halfstar:")).to.be.true;
+      expect(bgg.STARS_RE.test(":star::star::star::star::star:")).to.be.true;
+      expect(bgg.STARS_RE.test(":nostar::nostar::nostar::nostar::nostar:")).to.be.true;
+      expect(bgg.STARS_RE.test(":halfstar::halfstar::halfstar::halfstar::halfstar:")).to.be.true;
 
-      expect(bgg.STARS_RE.test(":star::halfstar::nostar:")).to.be.true;
+      expect(bgg.STARS_RE.test(":star::halfstar::nostar::halfstar::star:")).to.be.true;
 
-      expect(bgg.STARS_RE.test("with extra :star::halfstar::nostar: text\nand new lines")).to.be.true;
+      expect(bgg.STARS_RE.test("with extra :star::halfstar::nostar::halfstar::star: text\nand new lines")).to.be.true;
     })
   });
 
   describe('getStarValue()', function() {
     it("should accuratly find the value", function() {
+      expect(bgg.getStarValue(":star:")).to.be.undefined;
       expect(bgg.getStarValue(":star::star::halfstar::nostar::nostar:")).to.equal(2.5);
       expect(bgg.getStarValue(":star::star::star::star::star:")).to.equal(5.0);
       expect(bgg.getStarValue(":star::star::star::star::star::star:")).to.equal(5.0);
-      expect(bgg.getStarValue(":halfstar:")).to.equal(0.5);
-      expect(bgg.getStarValue("with extra text :star::star: and\nnewlines")).to.equal(2.0);
-      expect(bgg.getStarValue("first :star::star: the first only :star:")).to.equal(2.0);
-      expect(bgg.getStarValue(":nostar::nostar::nostar:")).to.equal(0.0);
+      expect(bgg.getStarValue(":nostar::nostar::halfstar::nostar::nostar:")).to.equal(0.5);
+      expect(bgg.getStarValue("with extra text :nostar::star::star::nostar::nostar: and\nnewlines")).to.equal(2.0);
+      expect(bgg.getStarValue("first :nostar::nostar::nostar::star::star: the first only :star::star::star::star::star:")).to.equal(2.0);
+      expect(bgg.getStarValue(":nostar::nostar::nostar::nostar::nostar:")).to.equal(0.0);
+      expect(bgg.getStarValue(":star::star::star::star::star::star:")).to.equal(5.0);
     })
   });
 

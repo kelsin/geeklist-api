@@ -10,7 +10,7 @@ const BGG_THREAD_PATH = 'thread/';
 
 const SUMMARY_RE = /\<summary\>(.+)\<\/summary\>/i;
 const RATING_RE = /\<rating\>([0-9.]+)\<\/rating\>/i;
-const STARS_RE = /(:(half|no)?star:)+/;
+const STARS_RE = /(:(half|no)?star:){5}/;
 const STAR_RE = /:star:/g;
 const NOSTAR_RE = /:nostar:/g;
 const HALFSTAR_RE = /:halfstar:/g;
