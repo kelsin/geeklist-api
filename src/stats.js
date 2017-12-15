@@ -130,10 +130,11 @@ const selectEntries = query => query
       .orderBy("items.postdate", "desc");
 
 const selectRatings = query => query
-      .select(db.raw('distinct on("items"."username", "items"."objectname", "items"."objectid", "items"."imageid") "items"."username", "items"."objectname", "items"."objectid", "items"."imageid"'))
+      .select(db.raw('distinct on("items"."geeklist_id", "items"."username", "items"."objectname", "items"."objectid", "items"."imageid") "items"."geeklist_id", "items"."username", "items"."objectname", "items"."objectid", "items"."imageid"'))
       .select("items.summary", "items.rating",
               "items.id", "items.postdate")
       .whereNotNull("items.rating")
+      .orderBy("items.geeklist_id")
       .orderBy("items.username")
       .orderBy("items.objectname")
       .orderBy("items.objectid")
