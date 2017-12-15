@@ -8,15 +8,19 @@ const R = require('ramda');
 const randomInt = (min, max) =>
       Math.floor(min + Math.random() * (max + 1 - min));
 
+const minimumUpdateSeconds = 300; // 5 Minutes
+const maximumUpdateSeconds = 604800; // 7 Days
+
 // getNewUpdateTime :: Number -> Moment -> Moment
-const _getNewUpdateTime = (minimumUpdateSeconds, now, randomSeconds, lastUpdated) => {
+const _getNewUpdateTime = (now, randomSeconds, lastUpdated) => {
     let diff = now.diff(lastUpdated);
     let newUpdateSeconds = diff / 4000;
     logger.debug("Geeklist last updated at " + lastUpdated.toString() + ", " + (diff / 1000) + " seconds ago");
     logger.debug("Updating it again in " + newUpdateSeconds + " seconds");
     logger.debug("Min: " + minimumUpdateSeconds + ", Random: " + randomSeconds);
-    let result = now.add(Math.max(minimumUpdateSeconds,
-                                  newUpdateSeconds) + randomSeconds,
+    let result = now.add(R.clamp(minimumUpdateSeconds,
+                                 maximumUpdateSeconds,
+                                 newUpdateSeconds) + randomSeconds,
                          'seconds');
     logger.debug("Result: " + result.toString());
     return result;
@@ -111,7 +115,7 @@ const updateGeeklistData = geeklist => {
         .where({ id: geeklist.id })
         .update({
             updated_at: now.toDate(),
-            next_update_at: getNewUpdateTime(300, now, randomInt(1, 60), lastUpdated).toDate(),
+            next_update_at: getNewUpdateTime(now, randomInt(1, 60), lastUpdated).toDate(),
             ...updates
         })
         .return(geeklist);

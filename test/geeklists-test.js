@@ -15,13 +15,11 @@ describe('geeklists.js', function() {
     describe('getNewUpdateTime()', function() {
         it('should provide the proper update time based on inputs', function() {
             let currentTime = moment();
-            let minimumUpdateSeconds = 300;
             let lastUpdated = moment().subtract(1, 'day');
             let newUpdateTime = moment().add(6, 'hours');
 
             expect(geeklists
-                   .getNewUpdateTime(minimumUpdateSeconds,
-                                     currentTime,
+                   .getNewUpdateTime(currentTime,
                                      0,
                                      lastUpdated)
                    .isSame(newUpdateTime)).to.be.true;
@@ -29,8 +27,7 @@ describe('geeklists.js', function() {
             let secondUpdateTime = newUpdateTime.add(7.5, 'hours');
 
             expect(geeklists
-                   .getNewUpdateTime(minimumUpdateSeconds,
-                                     newUpdateTime,
+                   .getNewUpdateTime(newUpdateTime,
                                      0,
                                      lastUpdated)
                    .isSame(secondUpdateTime)).to.be.true;
@@ -43,8 +40,7 @@ describe('geeklists.js', function() {
             let newUpdateTime = moment().add(7, 'hours');
 
             expect(geeklists
-                   .getNewUpdateTime(minimumUpdateSeconds,
-                                     currentTime,
+                   .getNewUpdateTime(currentTime,
                                      3600,
                                      lastUpdated)
                    .isSame(newUpdateTime)).to.be.true;
