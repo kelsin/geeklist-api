@@ -9,7 +9,7 @@ const randomInt = (min, max) =>
       Math.floor(min + Math.random() * (max + 1 - min));
 
 const minimumUpdateSeconds = 300; // 5 Minutes
-const maximumUpdateSeconds = 604800; // 7 Days
+const maximumUpdateSeconds = 172800; // 2 Days
 
 // getNewUpdateTime :: Number -> Moment -> Moment
 const _getNewUpdateTime = (now, randomSeconds, lastUpdated) => {
