@@ -63,7 +63,7 @@ const moveEntriesToGeeklists = R.curry((omit, data) => {
                 ...geeklist,
                 entries: R.compose(
                     R.sortWith([R.descend(R.prop('postdate'))]),
-                    R.map(R.omit(geeklistFields)),
+                    R.map(R.omit(['title', 'year', 'month'])),
                     R.map(R.omit(omit)),
                     R.filter(inGeeklist(geeklist.id))
                 )(entries)
