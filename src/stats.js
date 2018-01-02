@@ -3,7 +3,7 @@ const logger = require('./logger');
 const Promise = require('bluebird');
 const R = require('ramda');
 
-const geeklistFields = ['geeklist_id', 'title', 'year', 'month'];
+const geeklistFields = ['title', 'year', 'month'];
 const statFields = ['entries', 'games', 'users', 'uniques', 'summaries', 'ratings'];
 const pickStats = R.pick(statFields);
 const removeNull = R.pickBy(R.identity);
