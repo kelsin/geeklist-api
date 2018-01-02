@@ -226,17 +226,13 @@ const updateGeeklist = id =>
       .then(bgg.getGeeklist)
       .then(bgg.transformGeeklist)
       .then(updateGeeklistData)
-      .then(geeklist => {
-          logger.debug(geeklist.items[0]);
-          return geeklist;
-      })
       .then(geeklist => Promise.map(
           geeklist.items,
           insertOrUpdateGeeklistItem(id),
           { concurrency: 4 })
             .return(geeklist))
       .catch((err) => {
-          logger.error(err);
+          logger.debug(err);
           return updateInFive(id);
       });
 
