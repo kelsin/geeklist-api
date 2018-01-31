@@ -8,14 +8,15 @@ db.migrate.latest().then(data => {
   data[1].map(migration => logger.info("Ran migration: " + migration));
 });
 
-const INTERVAL = (process.env.UPDATE_INTERVAL_SECONDS || 5) * 1000;
+const INTERVAL = (process.env.UPDATE_INTERVAL_SECONDS || 60) * 1000;
 
 const update = () => {
   logger.debug("Updating geeklists");
-  return geeklists.updateGeeklists().reflect();
+  return geeklists.updateGeeklists().reflect()
+    .then(() => setTimeout(update, INTERVAL));
 }
 
-// Update initially and then start calling it based on the interval above
-update().then(() => setInterval(update, INTERVAL));
+// Update initially
+update();
 
 logger.info("Worker thread started");

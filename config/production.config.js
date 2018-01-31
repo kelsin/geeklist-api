@@ -5,7 +5,7 @@ module.exports = {
   },{
     name: "api",
     script: "./index.js",
-    instances  : 4,
+    instances  : 2,
     exec_mode  : "cluster"
   }]
 }

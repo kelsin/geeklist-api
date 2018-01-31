@@ -248,7 +248,7 @@ const updateGeeklists = () =>
       selectGeeklistsForUpdating()
       .then(logGeeklists("Updating"))
       .then(R.map(R.prop('id')))
-      .map(updateGeeklist);
+      .map(updateGeeklist, { concurrency: 1 });
 
 const postUpdate = (req, res, next) =>
       updateGeeklists()
