@@ -232,7 +232,7 @@ const updateGeeklist = id =>
           { concurrency: 4 })
             .return(geeklist))
       .catch((err) => {
-          logger.debug(err);
+          logger.error(err);
           return updateInFive(id);
       });
 
